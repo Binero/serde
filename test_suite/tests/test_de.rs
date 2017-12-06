@@ -104,6 +104,12 @@ enum EnumSkipAll {
     Skipped,
 }
 
+#[derive(PartialEq, Debug, Deserialize)]
+struct StructSplitVec {
+    a: Vec<i32>,
+    b: i32,
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 macro_rules! declare_tests {
@@ -667,6 +673,24 @@ declare_tests! {
             Token::Enum { name: "Enum" },
             Token::Bytes(b"Unit"),
             Token::Unit,
+        ],
+    }
+    test_struct_split_vec {
+        StructSplitVec { a: vec![0, 1, 3, 4], b: 2 } => &[
+            Token::Struct { name: "StructSplitVec", len: 0 },
+                Token::Str("a"),
+                Token::Seq { len: Some(2) },
+                Token::I32(0),
+                Token::I32(1),
+                Token::SeqEnd,
+                Token::Str("b"),
+                Token::I32(2),
+                Token::Str("a"),
+                Token::Seq { len: Some(2) },
+                Token::I32(3),
+                Token::I32(4),
+                Token::SeqEnd,
+            Token::StructEnd,
         ],
     }
     test_box {
